@@ -281,15 +281,18 @@ public class ConverteCat102
       //Endereco - 
       writer.print(destinatario.substring(63, 108).trim() + "|");
       
-      
+      //numero
       writer.print(destinatario.substring(108, 113) + "|");
       
       writer.print("|");
       
+      //bairro
       writer.print(destinatario.substring(136, 151).trim() + "|");
       
+      //municipio
       writer.print(destinatario.substring(151, 181).trim() + "|");
-      
+            
+      //UF
       writer.print(destinatario.substring(181, 183) + "|");
       
       writer.print("|");
@@ -298,8 +301,12 @@ public class ConverteCat102
       
       writer.print("|");
       
+      //IE 
       writer.print(destinatario.substring(14, 28));
       writer.print(conteudo);
+      
+      
+      //campo situacao - Mestre
       if (!linha.substring(195, 196).equals("C"))
       {
         linhaitens = null;
@@ -312,31 +319,40 @@ public class ConverteCat102
           if ((linhadados.substring(0, 14).equals(linha.substring(0, 14))) && 
             (linhaitens.substring(33, 42).equals(linha.substring(94, 103))))
           {
-            writer.print("30|");
+            
+        	//Registro 30
+        	writer.print("30|");
             contador30++;
             
+            //codigo item
             writer.print(linhaitens.substring(49, 59).trim() + "|");
             
+            //descricao item
             writer.print(linhaitens.substring(59, 99).trim() + "|");
             
+            //unidade
             writer.print("|");
             if (linhaitens.substring(103, 109).equals("      ")) {
               writer.print("0|");
             } else {
               writer.print(linhaitens.substring(103, 109) + "|");
             }
+            //quantidade
             if (Integer.parseInt(linhaitens.substring(109, 116)) == 0) {
               writer.print("1,0000|");
             } else {
               writer.print(linhaitens.substring(109, 116) + "," + linhaitens.substring(116, 120) + "|");
             }
-            writer.print(linhaitens.substring(131, 140) + "," + linhaitens.substring(140, 142) + "00" + "|");
+            //total inteiro + decimal
+            writer.print(linhaitens.substring(133, 142) + "," + linhaitens.substring(142, 144) + "00" + "|");
             
-            writer.print(linhaitens.substring(131, 140) + "," + linhaitens.substring(140, 142) + "|");
+            //total inteiro + decimal
+            writer.print(linhaitens.substring(133, 142) + "," + linhaitens.substring(142, 144) + "|");
             
             writer.print("020|");
             
-            writer.print(linhaitens.substring(208, 210) + "," + linhaitens.substring(210, 212) + "|");
+            //aliquota ICMS
+            writer.print(linhaitens.substring(210, 212) + "," + linhaitens.substring(212, 214) + "|");
             
             writer.print("0,00|");
             
