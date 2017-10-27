@@ -278,8 +278,9 @@ public class ConverteCat102
       //Razão Social
       writer.print(destinatario.substring(28, 63).trim() + "|");
       
-      //Endereco
+      //Endereco - 
       writer.print(destinatario.substring(63, 108).trim() + "|");
+      
       
       writer.print(destinatario.substring(108, 113) + "|");
       
