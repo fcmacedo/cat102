@@ -12,9 +12,14 @@ import java.util.List;
 
 public class ConverteCat102
 {
+  
+  private static final String CNPJ_CDT = "07861033000175";
+	
   public static void main(String[] args)
   {
-    int contador20 = 0;
+    
+	  
+	int contador20 = 0;
     int contador30 = 0;
     int contador40 = 0;
     int contador50 = 0;
@@ -37,8 +42,8 @@ public class ConverteCat102
     String linha = null;
     String linhadados = null;
     String linhaitens = null;
-    String cfopaux = null;
-    String valoraux = null;
+    //String cfopaux = null;
+    //String valoraux = null;
     String arquivom = null;
     String arquivoi = null;
     String arquivod = null;
@@ -46,6 +51,10 @@ public class ConverteCat102
     
     File diretorio = new File(".");
     String[] arquivos = diretorio.list();
+    
+    //Como era antes da alteração de 12/10/2017 (CAT 122): SP0011701NM.001
+    //Como ficou                                         : SP07861033000175210011701N01M.001
+    
     for (int i1 = 0; i1 < arquivos.length; i1++)
     {
       if ((arquivos[i1].length() >= 5) && ("M".equals(arquivos[i1].substring(arquivos[i1].length() - 5, arquivos[i1].length() - 4)))) {
@@ -58,12 +67,15 @@ public class ConverteCat102
         arquivod = arquivos[i1];
       }
     }
+    
+    
+    
     String[] mes = { "", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ" };
     
-    FileWriter fileWriter = null;
+    FileWriter fileWriter = null;//                                                SP0011701NM.001 SP07861033000175210011701N01M.001
     try
     {
-      fileWriter = new FileWriter("CAT102" + mes[Integer.parseInt(arquivom.substring(7, 9))] + arquivom.substring(5, 7) + ".txt");
+      fileWriter = new FileWriter("CAT102" + mes[Integer.parseInt(arquivom.substring(23, 25))] + arquivom.substring(21, 23) + ".txt");
     }
     catch (IOException e)
     {
@@ -100,9 +112,13 @@ public class ConverteCat102
     
     int menordata = 99999999;
     int maiordata = 0;
+    
+    //ok CAT 122
     try
     {
-      while ((linha = br.readLine()) != null)
+      
+    	//Carrega o mestre
+    	while ((linha = br.readLine()) != null)
       {
         campos.add(linha);
         if (Integer.parseInt(campos.get(i).substring(81, 89)) < menordata) {
@@ -118,37 +134,41 @@ public class ConverteCat102
     {
       e.printStackTrace();
     }
-    i = 0;
+    
     try
     {
-      while ((linha = bi.readLine()) != null)
+      //Carrega o item
+    	while ((linha = bi.readLine()) != null)
       {
         itens.add(linha);
-        i++;
+       
       }
     }
     catch (IOException e)
     {
       e.printStackTrace();
     }
-    i = 0;
+    
     try
     {
-      while ((linha = bd.readLine()) != null)
+      //carrega o dados
+    	while ((linha = bd.readLine()) != null)
       {
         dados.add(linha);
-        i++;
+        
       }
     }
     catch (IOException e)
     {
       e.printStackTrace();
     }
+   
+    //REGISTRO 10
     try
     {
       writer.print("10|");
       writer.print("1,00|");
-      writer.print("07861033000175|");
+      writer.print(CNPJ_CDT + "|");
       writer.print(Integer.toString(menordata).substring(6, 8) + "/" + Integer.toString(menordata).substring(4, 6) + "/" + Integer.toString(menordata).substring(0, 4) + "|");
       writer.print(Integer.toString(maiordata).substring(6, 8) + "/" + Integer.toString(maiordata).substring(4, 6) + "/" + Integer.toString(maiordata).substring(0, 4));
       writer.print(conteudo);
@@ -165,6 +185,8 @@ public class ConverteCat102
       if (campos.get(j) == null) {
         break;
       }
+      
+      //CNPJ ou CPF do Destinatário
       destinatario = null;
       for (int j2 = 0; j2 < dados.size(); j2++)
       {
@@ -175,8 +197,12 @@ public class ConverteCat102
           break;
         }
       }
+      
+      //Registro 20
       writer.print("20|");
       contador20++;
+      
+      //campo situacao - Mestre
       if (linha.substring(195, 196) == "S") {
         writer.print("C|");
       } else if (linha.substring(195, 196) == "R") {
@@ -189,52 +215,70 @@ public class ConverteCat102
       } else {
         writer.print("|");
       }
+      
+      
       writer.print("PROVEDORIA|");
+      
+      //campo serie - Mestre
       if (linha.substring(91, 94) == "U") {
         writer.print("0|");
       } else {
         writer.print(linha.substring(91, 94) + "|");
       }
+      
+      //campo Numero NF - Mestre
       writer.print(linha.substring(94, 103) + "|");
       
+      //Campo Data de Emissao
       writer.print(linha.substring(87, 89) + "/" + linha.substring(85, 87) + "/" + linha.substring(81, 85) + " 00:00:00" + "|");
       
+    //Campo Data de Emissao
       writer.print(linha.substring(87, 89) + "/" + linha.substring(85, 87) + "/" + linha.substring(81, 85) + " 00:00:00" + "|");
       
       writer.print("1|");
       
       linhaitens = null;
-      cfopaux = "0";
-      valoraux = "0";
+      //cfopaux = "0";
+      //valoraux = "0";
+      
       for (int j2 = 0; j2 < itens.size(); j2++)
       {
         if (itens.get(j2) == null) {
           break;
         }
+        
         linhaitens = itens.get(j2);
         if ((linhaitens.substring(0, 14).equals(linha.substring(0, 14))) && 
           (linhaitens.substring(33, 42).equals(linha.substring(94, 103))))
         {
-          writer.print(linhaitens.substring(42, 46) + "|");
+            //CFOP
+        	writer.print(linhaitens.substring(42, 46) + "|");
           break;
         }
       }
       writer.print("|");
       
       writer.print("|");
+      
+      //Verifica se é CPF ou CNPJ
       if (destinatario.substring(0, 3).equals("000"))
       {
-        if (destinatario.substring(0, 14).equals("00027096000262")) {
+        //Um CPF???
+    	if (destinatario.substring(0, 14).equals("00027096000262")) {
           writer.print(destinatario.substring(0, 14).trim() + "|");
         } else {
           writer.print(destinatario.substring(3, 14).trim() + "|");
         }
       }
+      //CNPJ
       else {
         writer.print(destinatario.substring(0, 14).trim() + "|");
       }
+      
+      //Razão Social
       writer.print(destinatario.substring(28, 63).trim() + "|");
       
+      //Endereco
       writer.print(destinatario.substring(63, 108).trim() + "|");
       
       writer.print(destinatario.substring(108, 113) + "|");
